@@ -12,9 +12,9 @@ Attachment::AddAfter("Client::onKilled", "AntiScum::onKilled");
 // Constants
 $AntiScum::ENABLED = true;
 $AntiScum::DEBUG = false;
-$AntiScum::NON_STANDOFF_DURATION_SECONDS = 30;
-$AntiScum::STANDOFF_DURATION_SECONDS = 20;
-$AntiScum::SAFE_ZONE_RADIUS_METERS = 160;
+$AntiScum::NON_STANDOFF_DURATION_SECONDS = 25;
+$AntiScum::STANDOFF_DURATION_SECONDS = 15;
+$AntiScum::SAFE_ZONE_RADIUS_METERS = 150;
 $AntiScum::TIME_DAMAGE_RATIO = 0.2;  // 20% of max HP, 5 second death
 $AntiScum::FLAG_POSITION_ENEMY_SAFE_ZONE = "ENEMY_SAFE_ZONE";
 $AntiScum::FLAG_POSITION_FRIENDLY_SAFE_ZONE = "FRIENDLY_SAFE_ZONE";
@@ -121,13 +121,15 @@ function AntiScum::getDistanceFromTeamFlag(%cl, %team) {
   %flagPos = $teamFlag[%team].originalPosition;
   %flagPosX = getWord(%flagPos, 0);
   %flagPosY = getWord(%flagPos, 1);
+  %flagPosZ = getWord(%flagPos, 2);
 
   %clPos = GameBase::getPosition(%cl);
   %clPosX = getWord(%clPos, 0);
   %clPosY = getWord(%clPos, 1);
+  %clPosZ = getWord(%clPos, 2);
 
   // Zero out Z-axis so its a circle and not a sphere
-  return Vector::getDistance(%flagPosX @ " " @ %flagPosY @ " 0", %clPosX @ " " @ %clPosY @ " 0");
+  return Vector::getDistance(%flagPosX @ " " @ %flagPosY @ " " @ %flagPosZ, %clPosX @ " " @ %clPosY @ " " @ %clPosZ);
 }
 
 // Check the time left on timer, determine if timer should tick, and set standoff states
