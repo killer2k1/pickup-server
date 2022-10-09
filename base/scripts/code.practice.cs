@@ -47,6 +47,23 @@
             PracticeMode::restoreAmmo(%cl);
             GAMEBASE::setEnergy(%player, %cl.energy);
             PracticeMode::msgRestoredPosition(%cl);
+            for (%i = 0; %i < getNumTeams(); %i++) {
+                %flag = $teamFlag[%i];
+                if (%flag.carrier == %player) {
+                    Player::setItemCount(%player, "Flag", 0);
+                    GameBase::setPosition(%flag, %flag.originalPosition);
+                    Item::setVelocity(%flag, "0 0 0");
+                    Item::hide(%flag, false);
+                    %flag.atHome = true;
+                    $freeze::FlagClient[%i] = 0;
+                    $freeze::OOB[%i] = false;
+                    zadmin::ActiveMessage::All(FlagReturned, %i, 0);
+                    Client::onFlagReturn(%i, 0);
+                    %flag.carrier = -1;
+                    %player.carryFlag = "";
+                    Flag::clearWaypoint(%cl, false);
+                }
+            }
         }
         else {
             PracticeMode::disabledTraining(%cl);
@@ -77,6 +94,7 @@
 
             Player::SetItemCount(%cl,Grenade,5);
             Player::SetItemCount(%cl,RepairKit,1);
+            Player::setItemCount(%cl,Beacon,3);
         }
         else {
             PracticeMode::disabledTraining(%cl);
